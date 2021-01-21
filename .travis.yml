@@ -1,0 +1,26 @@
+language: generic 
+sudo: required
+services:
+  - docker
+
+
+before_install:
+  -docker build -t jeffmckune/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true jeffmckune/react-test npm test 
+
+after_success:
+  - docker build -t jeffmckune/multi-client ./client
+  - docker build -t jeffmckune/multi-nginx ./nginx
+  - docker build -t jeffmckune/multi-server ./server
+  - docker build -t jeffmckune/multi-worker ./worker
+
+  # Log into docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Push images to docker hub 
+  - docker push jeffmckune/multi-client
+  - docker push jeffmckune/multi-nginx
+  - docker push jeffmckune/multi-worker
+  - docker push jeffmckune/multi-server

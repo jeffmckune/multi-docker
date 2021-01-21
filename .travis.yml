@@ -5,7 +5,7 @@ services:
 
 
 before_install:
-  -docker build -t jeffmckune/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t jeffmckune/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true jeffmckune/react-test npm test 
